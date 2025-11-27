@@ -1,0 +1,96 @@
+{
+  "custom_models": [
+    {
+      "model_name": "gemini-pro",
+      "provider": "google",
+      "api_base": "https://api.google.com",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": true,
+      "supports_vision": true,
+      "max_tokens": 32768
+    },
+    {
+      "model_name": "o4-mini-2025-04-16",
+      "provider": "openai",
+      "api_base": "https://api.openai.com/v1",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    },
+    {
+      "model_name": "gpt-5.1-chat",
+      "provider": "openai",
+      "api_base": "https://api.openai.com/v1",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    },
+    {
+      "model_name": "claude-opus-4",
+      "provider": "anthropic",
+      "api_base": "https://api.anthropic.com",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    },
+    {
+      "model_name": "claude-3-5-sonnet-20241022",
+      "provider": "anthropic",
+      "api_base": "https://api.anthropic.com",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    },
+    {
+      "model_name": "deepseek-v3.2-exp",
+      "provider": "deepseek",
+      "api_base": "https://api.deepseek.com/v1",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    },
+    {
+      "model_name": "deepseek-r1-250528",
+      "provider": "deepseek",
+      "api_base": "https://api.deepseek.com/v1",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    },
+    {
+      "model_name": "gemini-2.5-pro",
+      "provider": "google",
+      "api_base": "https://generativelanguage.googleapis.com/v1",
+      "api_key": null,
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": false,
+      "supports_vision": false,
+      "max_tokens": null
+    }
+  ],
+  "aliases": {
+    "gemini": "gemini-pro",
+    "llama3": "llama-3-local"
+  }
+}
