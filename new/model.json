@@ -9,7 +9,9 @@
       "supports_streaming": true,
       "supports_functions": true,
       "supports_vision": true,
-      "max_tokens": 32768
+      "max_tokens": 32768,
+      "use_responses_api": false,
+      "output_version": null
     },
     {
       "model_name": "o4-mini-2025-04-16",
@@ -20,7 +22,9 @@
       "supports_streaming": true,
       "supports_functions": false,
       "supports_vision": false,
-      "max_tokens": null
+      "max_tokens": null,
+      "use_responses_api": false,
+      "output_version": null
     },
     {
       "model_name": "gpt-5.1-chat",
@@ -31,7 +35,9 @@
       "supports_streaming": true,
       "supports_functions": false,
       "supports_vision": false,
-      "max_tokens": null
+      "max_tokens": null,
+      "use_responses_api": false,
+      "output_version": null
     },
     {
       "model_name": "claude-opus-4",
@@ -42,18 +48,9 @@
       "supports_streaming": true,
       "supports_functions": false,
       "supports_vision": false,
-      "max_tokens": null
-    },
-    {
-      "model_name": "claude-3-5-sonnet-20241022",
-      "provider": "anthropic",
-      "api_base": "https://api.anthropic.com",
-      "api_key": null,
-      "default_params": {},
-      "supports_streaming": true,
-      "supports_functions": false,
-      "supports_vision": false,
-      "max_tokens": null
+      "max_tokens": null,
+      "use_responses_api": false,
+      "output_version": null
     },
     {
       "model_name": "deepseek-v3.2-exp",
@@ -64,7 +61,9 @@
       "supports_streaming": true,
       "supports_functions": false,
       "supports_vision": false,
-      "max_tokens": null
+      "max_tokens": null,
+      "use_responses_api": false,
+      "output_version": null
     },
     {
       "model_name": "deepseek-r1-250528",
@@ -75,7 +74,9 @@
       "supports_streaming": true,
       "supports_functions": false,
       "supports_vision": false,
-      "max_tokens": null
+      "max_tokens": null,
+      "use_responses_api": false,
+      "output_version": null
     },
     {
       "model_name": "gemini-2.5-pro",
@@ -86,7 +87,22 @@
       "supports_streaming": true,
       "supports_functions": false,
       "supports_vision": false,
-      "max_tokens": null
+      "max_tokens": null,
+      "use_responses_api": false,
+      "output_version": null
+    },
+    {
+      "model_name": "my-custom-model",
+      "provider": "openai",
+      "api_base": "https://api.custom.com/v1",
+      "api_key": "sk-custom-key-xxx",
+      "default_params": {},
+      "supports_streaming": true,
+      "supports_functions": true,
+      "supports_vision": false,
+      "max_tokens": 4096,
+      "use_responses_api": false,
+      "output_version": null
     }
   ],
   "aliases": {
