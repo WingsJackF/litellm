@@ -1,0 +1,12 @@
+# LangChain 核心库
+langchain-core>=0.1.0
+
+# LangChain 提供商集成
+langchain-openai>=0.0.5      # OpenAI、DeepSeek 等兼容接口
+langchain-anthropic>=0.1.0   # Anthropic Claude
+langchain-google-genai>=0.0.5 # Google Gemini
+
+# 其他依赖
+python-dotenv>=1.0.0         # 环境变量管理
+requests>=2.28.0             # HTTP 请求（用于原始 API 调用）
+
