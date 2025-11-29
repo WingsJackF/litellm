@@ -1,23 +1,26 @@
 # LiteLLM 简化版模型管理器
 
-一个轻量级的 LLM 模型管理工具，支持多种模型提供商和统一的调用接口。
+一个轻量级的 LLM 模型管理工具，**零依赖 LangChain**，基于 OpenAI SDK，支持多种模型提供商和统一的调用接口。
 
 ## ✨ 核心特性
 
 - 🎯 **智能 API 选择**: 根据调用函数自动选择正确的 API 端点
-- 🔌 **多提供商支持**: OpenAI, Anthropic, Google, DeepSeek 等
+- 🔌 **多提供商支持**: OpenAI, Anthropic, Google, DeepSeek 等（OpenAI 兼容 API）
 - 📦 **原始 JSON 响应**: 直接返回完整的 API 响应数据
 - 💾 **模型管理**: 自动加载和持久化模型配置
-- 🔄 **流式输出**: 支持流式响应（TODO）
+- 🔄 **流式输出**: 完整支持流式响应
 - 🛠️ **工具调用**: 支持 Function Calling
 - 📊 **详细统计**: 完整的 token 使用和元数据
+- 🪶 **轻量级**: 基于 OpenAI 官方 SDK，稳定可靠
 
 ## 🚀 快速开始
 
 ### 安装依赖
 
 ```bash
-pip install langchain-core langchain-openai langchain-anthropic langchain-google-genai python-dotenv requests
+pip install openai python-dotenv
+# 或者
+pip install -r requirements.txt
 ```
 
 ### 配置环境
@@ -33,7 +36,7 @@ BASE_URL=https://api.openai.com/v1
 ### 基础使用
 
 ```python
-from langchain_core.messages import HumanMessage
+from message_manager import HumanMessage
 from model_manager import completion
 
 # 调用模型
@@ -120,10 +123,10 @@ model_manager.chat(..., use_responses_api=True)
 
 ## 💬 消息格式
 
-使用 LangChain Message 对象：
+使用内置的 Message 类（无需 LangChain）：
 
 ```python
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from message_manager import HumanMessage, AIMessage, SystemMessage
 
 messages = [
     SystemMessage(content="你是助手"),
@@ -208,6 +211,8 @@ completion(model="gemini", messages=messages)  # → gemini-pro
 强制模型以 JSON 格式输出：
 
 ```python
+from message_manager import SystemMessage, HumanMessage
+
 messages = [
     SystemMessage(content="你是助手，请以 JSON 格式回复"),
     HumanMessage(content="介绍 Python，包含：name, year, features")
@@ -232,6 +237,8 @@ print(data)
 让模型调用外部工具：
 
 ```python
+from message_manager import HumanMessage
+
 tools = [{
     "type": "function",
     "function": {
@@ -254,6 +261,7 @@ resp = completion(
 )
 
 # 检查工具调用
+import json
 message = resp['choices'][0]['message']
 if message.get('tool_calls'):
     for tool_call in message['tool_calls']:
@@ -268,6 +276,8 @@ if message.get('tool_calls'):
 处理包含图片的输入：
 
 ```python
+from message_manager import HumanMessage
+
 messages = [
     HumanMessage(content=[
         {"type": "text", "text": "这张图片里有什么？"},
@@ -288,6 +298,8 @@ print(content)
 模型可以根据问题选择调用多个工具：
 
 ```python
+from message_manager import HumanMessage
+
 tools = [
     {
         "type": "function",
