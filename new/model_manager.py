@@ -139,7 +139,7 @@ class ModelManager:
         
         # 提供商列表
         self.providers: List[str] = [
-            "openai", "anthropic", "google", "deepseek", "ollama"
+            "openai", "anthropic", "google", "deepseek"
         ]
         
         # 提供商默认 API Base URL 映射
@@ -155,6 +155,10 @@ class ModelManager:
         self.known_models: Dict[str, str] = {
             "gpt-4o": "openai",
             "gpt-4-turbo": "openai",
+            "gpt-5": "openai",
+            "o3": "openai",
+            "o3-deep-research": "openai",  # Deep Research 模型
+            "computer-use-preview": "openai",  # Computer Use 模型
             "claude-3-5-sonnet-20241022": "anthropic",
             "gemini-1.5-pro": "google",
             "deepseek-chat": "deepseek"
@@ -328,6 +332,8 @@ class ModelManager:
         response_format: Optional[Dict] = None,
         stream: bool = False,
         use_responses_api: Optional[bool] = None,
+        use_provider_api: bool = False,
+        provider: Optional[str] = None,
         **kwargs
     ) -> Union[Dict, Any]:
         """
@@ -340,6 +346,8 @@ class ModelManager:
             response_format: 响应格式定义
             stream: 是否流式输出
             use_responses_api: 是否使用 responses API（None 时使用配置文件设置）
+            use_provider_api: 是否使用厂商原始 API（True 时优先使用 PROVIDER_API_KEY/BASE）
+            provider: 提供商名称（如 openai, anthropic, google 等）
             **kwargs: 其他参数
         
         Returns:
@@ -352,18 +360,23 @@ class ModelManager:
                 "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30}
             }
         """
-        # 获取模型配置
-        config = self.get_model_config(model) or ModelConfig(model, "openai")
+        # 获取模型配置，如果没有找到则使用传入的 provider 或默认 openai
+        config = self.get_model_config(model)
+        if config is None:
+            default_provider = provider or "openai"
+            config = ModelConfig(model, default_provider)
         
         # 确定使用哪种 API：优先使用参数，其次使用配置
         if use_responses_api is None:
             use_responses_api = config.use_responses_api
         
         # 根据 API 类型决定获取 key 和 base 的优先级
+        # use_provider_api=True: 强制使用厂商原始 API (PROVIDER_API_KEY, PROVIDER_API_BASE)
         # responses API: 优先使用提供商特定的环境变量 (OPENAI_API_KEY, OPENAI_API_BASE)
         # completion API: 优先使用统一的代理 (API_KEY, BASE_URL)
-        api_key = self._get_api_key(config.provider, config.api_key, use_provider_specific=use_responses_api)
-        api_base = self._get_api_base(config.provider, config.api_base, use_provider_specific=use_responses_api)
+        use_provider_specific = use_provider_api or use_responses_api
+        api_key = self._get_api_key(config.provider, config.api_key, use_provider_specific=use_provider_specific)
+        api_base = self._get_api_base(config.provider, config.api_base, use_provider_specific=use_provider_specific)
         
         # 转换 Messages 为 API 格式
         from message_manager import MessageManager
@@ -446,6 +459,7 @@ def completion(
     response_format: Optional[Dict] = None,
     stream: bool = False,
     response_type: str = "raw",
+    use_provider_api: bool = False,
     **kwargs
 ) -> Union[str, Dict, LLMResponse]:
     """
@@ -464,6 +478,7 @@ def completion(
         response_type: 响应类型
             - "content": 只返回内容字符串
             - "raw": 返回原始 API 响应 dict (默认)
+        use_provider_api: 是否使用厂商原始 API（True 时使用 PROVIDER_API_KEY/BASE）
         **kwargs: 其他参数
     
     Returns:
@@ -480,8 +495,12 @@ def completion(
         >>> # 只获取内容
         >>> content = completion(model="gpt-4o", messages=[HumanMessage(content="Hello!")], response_type="content")
         >>> print(content)  # 直接输出字符串
+        
+        >>> # 使用厂商原始 API（Computer Use 等场景）
+        >>> resp = completion(model="anthropic/claude", messages=msgs, use_provider_api=True)
     """
     # 解析模型名称 (支持 provider/model 格式)
+    provider = None
     if "/" in model:
         provider, model_name = model.split("/", 1)
         model = model_name
@@ -494,6 +513,8 @@ def completion(
         response_format=response_format,
         stream=stream,
         use_responses_api=False,  # completion() 强制使用 chat/completions
+        use_provider_api=use_provider_api,  # 是否使用厂商原始 API
+        provider=provider,  # 传递解析出的 provider
         **kwargs
     )
     
@@ -513,6 +534,7 @@ def response(
     response_format: Optional[Dict] = None,
     stream: bool = False,
     response_type: str = "raw",
+    use_provider_api: bool = False,
     **kwargs
 ) -> Union[str, Dict, LLMResponse]:
     """
@@ -531,6 +553,7 @@ def response(
         response_type: 响应类型
             - "content": 只返回内容字符串
             - "raw": 返回原始 API 响应 dict (默认)
+        use_provider_api: 是否使用厂商原始 API（True 时使用 PROVIDER_API_KEY/BASE）
         **kwargs: 其他参数
     
     Returns:
@@ -549,6 +572,7 @@ def response(
         >>> print(content)  # 直接输出字符串
     """
     # 解析模型名称
+    provider = None
     if "/" in model:
         provider, model_name = model.split("/", 1)
         model = model_name
@@ -561,6 +585,8 @@ def response(
         response_format=response_format,
         stream=stream,
         use_responses_api=True,  # response() 强制使用 responses API
+        use_provider_api=use_provider_api,  # 是否使用厂商原始 API
+        provider=provider,  # 传递解析出的 provider
         **kwargs
     )
     
@@ -710,6 +736,78 @@ if __name__ == "__main__":
         resp = response(model="openai/gpt-5", messages=simple_messages, response_type="content")
         log(f"   Response: {resp}")
         
+        log("\n🔬 Deep Research 流式测试 (o3-deep-research)...")
+        # Deep Research 需要配置 web_search_preview 工具
+        research_messages = [
+            HumanMessage(content="请深入研究并总结：量子计算的基本原理是什么？它与经典计算有什么根本区别？")
+        ]
+        # Deep Research 必须配置工具：web_search_preview, mcp, 或 file_search
+        deep_research_tools = [
+            {"type": "web_search_preview"}  # 启用网页搜索能力
+        ]
+        
+        # 流式输出
+        print("   [流式输出开始]")
+        stream_resp = response(
+            model="openai/o3-deep-research",
+            messages=research_messages,
+            tools=deep_research_tools,
+            stream=True,  # 启用流式输出
+            timeout=600
+        )
+        
+        # 处理流式响应
+        full_content = ""
+        for event in stream_resp:
+            # 根据事件类型处理
+            if hasattr(event, 'type'):
+                if event.type == 'response.output_text.delta':
+                    # 文本增量
+                    delta = event.delta if hasattr(event, 'delta') else ""
+                    print(delta, end="", flush=True)
+                    full_content += delta
+                elif event.type == 'response.completed':
+                    # 响应完成
+                    print("\n   [流式输出结束]")
+            elif hasattr(event, 'choices'):
+                # chat/completions 流式格式
+                for choice in event.choices:
+                    if hasattr(choice, 'delta') and hasattr(choice.delta, 'content'):
+                        delta = choice.delta.content or ""
+                        print(delta, end="", flush=True)
+                        full_content += delta
+        
+        log(f"   Research Result (总长度: {len(full_content)} 字符)")
+        
+        log("\n🖥️ Computer Use 测试 (computer-use-preview)...")
+        log("   💡 提示: 使用 computer_use.py 模块进行真实自动化")
+        log("   运行: python computer_use.py")
+        
+        # 简单测试：只发送一次请求看响应
+        computer_tool = {
+            "type": "computer_use_preview",
+            "display_width": 1920,
+            "display_height": 1080,
+            "environment": "browser",
+        }
+        
+        resp = response(
+            model="openai/computer-use-preview",
+            messages=[HumanMessage(content="截取当前屏幕")],
+            tools=[computer_tool],
+            response_type="raw",
+            timeout=60,
+            truncation="auto"
+        )
+        
+        if resp and 'output' in resp:
+            for item in resp['output']:
+                if item.get('type') == 'computer_call':
+                    action = item.get('action', {})
+                    log(f"   ✅ Computer Action: {action.get('type', 'unknown')}")
+        else:
+            log(f"   ⚠️ 响应: {str(resp)[:200]}...")
+        
     except Exception as e:
         log(f"   ❌ OpenAI 测试失败: {e}")
     
@@ -769,7 +867,7 @@ if __name__ == "__main__":
         resp = completion(
             model="qwen-plus", 
             messages=qwen_format_messages, 
-            response_format=json_format,
+            response_format=structured_format,
             response_type="content"
         )
         log(f"   Structured: {parse_person(resp)}")
@@ -798,7 +896,7 @@ if __name__ == "__main__":
         resp = completion(
             model="deepseek-v3.2-exp", 
             messages=deepseek_format_messages, 
-            response_format=json_format,
+            response_format=structured_format,
             response_type="content"
         )
         log(f"   Structured: {parse_person(resp)}")
@@ -823,7 +921,8 @@ if __name__ == "__main__":
         resp = completion(
             model="claude-sonnet-4-5-20250929", 
             messages=claude_format_messages, 
-            response_type="content"
+            response_type="content",
+            response_format=structured_format
         )
         log(f"   Structured: {parse_person(resp)}")
         
@@ -847,7 +946,7 @@ if __name__ == "__main__":
         resp = completion(
             model="gemini-2.5-pro", 
             messages=gemini_format_messages, 
-            response_format=json_format,
+            response_format=structured_format,
             response_type="content"
         )
         log(f"   Structured: {parse_person(resp)}")
@@ -859,8 +958,183 @@ if __name__ == "__main__":
     except Exception as e:
         log(f"   ❌ Gemini 测试失败: {e}")
     
+    # ============================================
+    # 6. Computer Use 测试（简化版：只测试点击位置）
+    # ============================================
     log("\n" + "="*50)
-    log("✅ 测试完成")
+    log("6. Computer Use 测试 (点击位置测试)")
+    log("="*50)
+    
+    try:
+        from PIL import Image
+        
+        # 测试图片路径（1024x768 的截图）
+        test_screenshot = "./test_image/screenshot.png"
+        
+        if os.path.exists(test_screenshot):
+            log(f"\n找到测试截图: {test_screenshot}")
+            
+            # 验证图片尺寸
+            with Image.open(test_screenshot) as img:
+                width, height = img.size
+                log(f"   图片尺寸: {width}x{height}")
+            
+            # 使用 HumanMessage 构造消息（本地图片会自动转换为 base64）
+            computer_messages = [
+                HumanMessage(content=[
+                    {"type": "text", "text": "请在屏幕上找到并点击 model.json 文件"},
+                    {"type": "image_url", "image_url": {"url": test_screenshot}}
+                ])
+            ]
+            
+            # Computer Use 工具配置
+            computer_tool = {
+                "type": "computer_use_preview",
+                "display_width": 1024,
+                "display_height": 768,
+                "environment": "mac"
+            }
+            
+            log("\nComputer Use 点击测试 (computer-use-preview)...")
+            log("   任务: 点击 model.json 文件")
+            
+            # 使用 response() 函数调用 API（使用厂商原始 API）
+            resp = response(
+                model="openai/computer-use-preview",
+                messages=computer_messages,
+                tools=[computer_tool],
+                response_type="raw",
+                use_provider_api=True,  # 使用 OpenAI 原始 API
+                truncation="auto",
+                timeout=60
+            )
+            
+            # 解析响应，获取点击位置
+            if resp and 'output' in resp:
+                for item in resp['output']:
+                    if item.get('type') == 'computer_call':
+                        action = item.get('action', {})
+                        action_type = action.get('type', 'unknown')
+                        
+                        if action_type == 'click':
+                            x = action.get('x', 0)
+                            y = action.get('y', 0)
+                            button = action.get('button', 'left')
+                            log(f"   模型返回点击动作:")
+                            log(f"      位置: ({x}, {y})")
+                            log(f"      按钮: {button}")
+                        elif action_type == 'screenshot':
+                            log(f"   模型请求截图")
+                        else:
+                            log(f"   动作类型: {action_type}, 详情: {action}")
+                    elif item.get('type') == 'message':
+                        for content in item.get('content', []):
+                            if content.get('type') == 'output_text':
+                                log(f"   模型消息: {content.get('text', '')[:100]}")
+            else:
+                log(f"   响应格式异常: {str(resp)[:200]}...")
+                
+        else:
+            log(f"\n测试截图不存在: {test_screenshot}")
+            log("   请先截取一张 1024x768 的屏幕截图并保存到 test_image/screenshot.png")
+            
+    except Exception as e:
+        log(f"   Computer Use 测试失败: {e}")
+    
+    # ============================================
+    # 7. Anthropic Computer Use 测试
+    # ============================================
+    # log("\n" + "="*50)
+    # log("7. Anthropic Computer Use 测试 (点击位置测试)")
+    # log("="*50)
+    
+    # try:
+    #     from PIL import Image
+        
+    #     # 测试图片路径（1024x768 的截图）
+    #     test_screenshot = "./test_image/screenshot.png"
+        
+    #     if os.path.exists(test_screenshot):
+    #         log(f"\n找到测试截图: {test_screenshot}")
+            
+    #         # 验证图片尺寸
+    #         with Image.open(test_screenshot) as img:
+    #             width, height = img.size
+    #             log(f"   图片尺寸: {width}x{height}")
+            
+    #         # 使用 HumanMessage 构造消息（本地图片自动转换为 base64）
+    #         computer_messages = [
+    #             HumanMessage(content=[
+    #                 {"type": "text", "text": "请在屏幕上找到并点击 model.json 文件"},
+    #                 {"type": "image_url", "image_url": {"url": test_screenshot}}
+    #             ])
+    #         ]
+            
+    #         # Anthropic Computer Use 工具配置
+    #         computer_tool = {
+    #             "type": "computer_20250124",
+    #             "name": "computer",
+    #             "display_width_px": 1024,
+    #             "display_height_px": 768,
+    #             "display_number": 1,
+    #         }
+            
+    #         log("\nAnthropic Computer Use 点击测试...")
+    #         log("   任务: 点击 model.json 文件")
+            
+    #         # 使用 completion() 函数调用 API（使用厂商原始 API）
+    #         resp = completion(
+    #             model="anthropic/computer-use-2025-11-24",
+    #             messages=computer_messages,
+    #             tools=[computer_tool],
+    #             response_type="raw",
+    #             use_provider_api=True,  # 使用 Anthropic 原始 API
+    #             timeout=60
+    #         )
+            
+    #         # 调试：打印原始响应
+    #         log(f"   原始响应: {json_module.dumps(resp, ensure_ascii=False, indent=2)[:500] if resp else 'None'}...")
+            
+    #         # 解析响应，获取点击位置
+    #         if resp and 'choices' in resp:
+    #             message = resp['choices'][0].get('message', {})
+    #             tool_calls = message.get('tool_calls', [])
+                
+    #             if tool_calls:
+    #                 for tool_call in tool_calls:
+    #                     func_name = tool_call.get('function', {}).get('name', '')
+    #                     if func_name == 'computer':
+    #                         args = json_module.loads(tool_call['function'].get('arguments', '{}'))
+    #                         action = args.get('action', '')
+                            
+    #                         if action == 'left_click':
+    #                             coords = args.get('coordinate', [0, 0])
+    #                             log(f"   模型返回点击动作:")
+    #                             log(f"      位置: ({coords[0]}, {coords[1]})")
+    #                             log(f"      动作: left_click")
+    #                         elif action == 'screenshot':
+    #                             log(f"   模型请求截图")
+    #                         else:
+    #                             log(f"   动作类型: {action}, 详情: {args}")
+    #             else:
+    #                 # 没有 tool_calls，查看文本内容
+    #                 content = message.get('content', '')
+    #                 if content:
+    #                     log(f"   模型消息: {content[:200]}")
+    #         elif resp:
+    #             log(f"   响应格式: {list(resp.keys()) if isinstance(resp, dict) else type(resp)}")
+    #         else:
+    #             log(f"   响应为空")
+                
+    #     else:
+    #         log(f"\n测试截图不存在: {test_screenshot}")
+    #         log("   请先截取一张 1024x768 的屏幕截图并保存到 test_image/screenshot.png")
+            
+    # except Exception as e:
+    #     log(f"   Anthropic Computer Use 测试失败: {e}")
+    
+    log("\n" + "="*50)
+    log("测试完成")
     log("="*50)
     
     # 保存测试结果到 md 文件

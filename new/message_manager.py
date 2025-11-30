@@ -280,6 +280,12 @@ class MessageManager():
                                 "type": "input_image",
                                 "image_url": url
                             })
+                        elif type_ == "input_image":
+                            # input_image 类型：直接传递（用于 Computer Use 截图等）
+                            content.append(c)
+                        else:
+                            # 其他类型：直接传递
+                            content.append(c)
                 result.append({"role": role, "content": content})
             return result
                 
