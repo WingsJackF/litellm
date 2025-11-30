@@ -52,24 +52,11 @@ Response: Hello
 ## 
 🔬 Deep Research 流式测试 (o3-deep-research)...
 
+输出结果见 deep_research_result.md
 ```
 Research Result (总长度: 27885 字符)
 ```
 
-## 
-🖥️ Computer Use 测试 (computer-use-preview)...
-
-```
-💡 提示: 使用 computer_use.py 模块进行真实自动化
-```
-
-```
-运行: python computer_use.py
-```
-
-```
-✅ Computer Action: screenshot
-```
 
 
 ==================================================

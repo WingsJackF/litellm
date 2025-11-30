@@ -779,35 +779,7 @@ if __name__ == "__main__":
         
         log(f"   Research Result (总长度: {len(full_content)} 字符)")
         
-        log("\n🖥️ Computer Use 测试 (computer-use-preview)...")
-        log("   💡 提示: 使用 computer_use.py 模块进行真实自动化")
-        log("   运行: python computer_use.py")
-        
-        # 简单测试：只发送一次请求看响应
-        computer_tool = {
-            "type": "computer_use_preview",
-            "display_width": 1920,
-            "display_height": 1080,
-            "environment": "browser",
-        }
-        
-        resp = response(
-            model="openai/computer-use-preview",
-            messages=[HumanMessage(content="截取当前屏幕")],
-            tools=[computer_tool],
-            response_type="raw",
-            timeout=60,
-            truncation="auto"
-        )
-        
-        if resp and 'output' in resp:
-            for item in resp['output']:
-                if item.get('type') == 'computer_call':
-                    action = item.get('action', {})
-                    log(f"   ✅ Computer Action: {action.get('type', 'unknown')}")
-        else:
-            log(f"   ⚠️ 响应: {str(resp)[:200]}...")
-        
+     
     except Exception as e:
         log(f"   ❌ OpenAI 测试失败: {e}")
     
