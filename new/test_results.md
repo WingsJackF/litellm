@@ -1,6 +1,6 @@
 # 模型管理器测试结果
 
-**测试时间**: 2025-11-30 00:27:55
+**测试时间**: 2025-11-30 18:31:46
 
 ---
 
@@ -32,14 +32,14 @@ Response: Hello!
 📋 结构化输出测试 (gpt-4o)...
 
 ```
-Structured: 姓名=李小明, 年龄=34, 爱好=['阅读', '烹饪', '园艺', '旅行']
+Structured: 姓名=程小雨, 年龄=29, 爱好=['绘画', '远足', '烹饪', '读书', '摄影']
 ```
 
 ## 
 🖼️ 图片理解测试-网络URL (gpt-5)...
 
 ```
-图片描述: {'id': 'resp_06ddd4b01ce96e0900692b1eaedbe0819385dbab98adec75bf', 'created_at': 1764433583.0, 'error': None, 'incomplete_details': None, 'instructions': None, 'metadata': {}, 'model': 'gpt-5-2025-08-07', 'object': 'response', 'output': [{'id': 'rs_06ddd4b01ce96e0900692b1eb0c38481938018ce517bd1bdad', 'summary': [], 'type': 'reasoning', 'content': None, 'encrypted_content': None, 'status': None}, {'id': 'msg_06ddd4b01ce96e0900692b1eb421488193a8d422311b4c2be2', 'content': [{'annotations': [], 'text': '一张教程页截图，标题为“第四步：模型载体搭建，安装 Chatbox AI 工具”。上半部分展示 Chatbox AI 官网和下载界面，下半部分是应用首次启动的配置窗口，红框和箭头提示选择“使用自己的 API Key 或本地模型”，旁边还有“Chatbox AI Cloud”按钮。', 'type': 'output_text', 'logprobs': []}], 'role': 'assistant', 'status': 'completed', 'type': 'message'}], 'parallel_tool_calls': True, 'temperature': 1.0, 'tool_choice': 'auto', 'tools': [], 'top_p': 1.0, 'background': False, 'conversation': None, 'max_output_tokens': None, 'max_tool_calls': None, 'previous_response_id': None, 'prompt': None, 'prompt_cache_key': None, 'reasoning': {'effort': 'medium', 'generate_summary': None, 'summary': None}, 'safety_identifier': None, 'service_tier': 'default', 'status': 'completed', 'text': {'format': {'type': 'text'}, 'verbosity': 'medium'}, 'top_logprobs': 0, 'truncation': 'disabled', 'usage': {'input_tokens': 649, 'input_tokens_details': {'cached_tokens': 0}, 'output_tokens': 210, 'output_tokens_details': {'reasoning_tokens': 128}, 'total_tokens': 859}, 'user': None, 'billing': {'payer': 'developer'}, 'prompt_cache_retention': None, 'store': True}
+图片描述: {'id': 'resp_01d79f0c5bfc59d900692c1bc73fb88194a26ad92bfc5e17bb', 'created_at': 1764498376.0, 'error': None, 'incomplete_details': None, 'instructions': None, 'metadata': {}, 'model': 'gpt-5-2025-08-07', 'object': 'response', 'output': [{'id': 'rs_01d79f0c5bfc59d900692c1bca2ee881949c0af6d8de376e56', 'summary': [], 'type': 'reasoning', 'content': None, 'encrypted_content': None, 'status': None}, {'id': 'msg_01d79f0c5bfc59d900692c1bd41fac8194b2963a5e4b43621a', 'content': [{'annotations': [], 'text': '一张 Chatbox AI 安装与配置的教程图。标题为“第四步：模型载体搭建，安装Chatbox AI工具”，显示去 chatboxai.app 下载，然后在应用中选择 AI 模型提供方，红框箭头强调“使用自己的 API Key 或本地模型”按钮，并附有网站与应用界面的截图。', 'type': 'output_text', 'logprobs': []}], 'role': 'assistant', 'status': 'completed', 'type': 'message'}], 'parallel_tool_calls': True, 'temperature': 1.0, 'tool_choice': 'auto', 'tools': [], 'top_p': 1.0, 'background': False, 'conversation': None, 'max_output_tokens': None, 'max_tool_calls': None, 'previous_response_id': None, 'prompt': None, 'prompt_cache_key': None, 'reasoning': {'effort': 'medium', 'generate_summary': None, 'summary': None}, 'safety_identifier': None, 'service_tier': 'default', 'status': 'completed', 'text': {'format': {'type': 'text'}, 'verbosity': 'medium'}, 'top_logprobs': 0, 'truncation': 'disabled', 'usage': {'input_tokens': 649, 'input_tokens_details': {'cached_tokens': 0}, 'output_tokens': 337, 'output_tokens_details': {'reasoning_tokens': 256}, 'total_tokens': 986}, 'user': None, 'billing': {'payer': 'developer'}, 'prompt_cache_retention': None, 'store': True}
 ```
 
 ## 
@@ -47,6 +47,28 @@ Structured: 姓名=李小明, 年龄=34, 爱好=['阅读', '烹饪', '园艺', '
 
 ```
 Response: Hello
+```
+
+## 
+🔬 Deep Research 流式测试 (o3-deep-research)...
+
+```
+Research Result (总长度: 27885 字符)
+```
+
+## 
+🖥️ Computer Use 测试 (computer-use-preview)...
+
+```
+💡 提示: 使用 computer_use.py 模块进行真实自动化
+```
+
+```
+运行: python computer_use.py
+```
+
+```
+✅ Computer Action: screenshot
 ```
 
 
@@ -64,16 +86,14 @@ Response: Hello
 🖼️ 本地图片测试 (gpt-4o - completion)...
 
 ```
-图片描述: 这张图片展示了如何安装Chatbox AI工具的第四步，提供了进入Chatbox AI官网进行免费下载的指示，并指导用户选择使用自己的API key模型。图片上有两部设备，一台电脑和一部手机，显示Chatbox应用的界面，并有一个用于选择配置AI模型的对话框，其中有“Chatbox AI Cloud”和“使用自己的API Key或本地模型”的选项。图片整体以指导安装步骤为主题。
+图片描述: 这张图片展示了安装Chatbox AI工具的第四步，指导用户如何选择配置自己的AI模型提供方。图片上有Chatbox工具的说明，强调其作为办公学习助手的功能，并支持多种操作系统。图片还包含了在Chatbox应用界面选择“使用自己的API Key或本地模型”的按钮指引。
 ```
 
 ## 
 🖼️ 本地图片测试 (gemini-2.5-pro - completion)...
 
 ```
-图片描述: 这张图片展示了安装和设置Chatbox AI工具的第四步，标题是“模型载体搭建，安装Chatbox AI工具”。它指导用户访问Chatbox AI官网下载软件，并演示了下载后如何选择使用自己的API Key或本地模型。图片还展示了Chatbox AI的界面，以及它作为办公学习助手的功能介绍。
-
-This image illustrates the fourth step of installing and setting up the Chatbox AI tool, titled "Model Carrier Construction, Install Chatbox AI Tool". It guides users to download the software from the Chatbox AI official website and demonstrates how to choose to use their own API Key or local model after downloading. The image also shows the Chatbox AI interface and introduces its functions as an office and learning assistant.
+图片描述: 这张图片展示了一个关于如何安装和设置名为“Chatbox AI”的桌面应用程序的教程截图。图中包含了该应用的介绍、下载页面以及启动后选择AI模型提供方的设置界面，重点标示了“使用自己的API Key或本地模型”的选项。
 ```
 
 
@@ -88,21 +108,21 @@ This image illustrates the fourth step of installing and setting up the Chatbox 
 📝 基本问答测试 (qwen-plus)...
 
 ```
-Response: Hello
+Response: Hello!
 ```
 
 ## 
 📋 结构化输出测试 (qwen-plus)...
 
 ```
-Structured: 姓名=林星辰, 年龄=28, 爱好=['摄影', '徒步旅行', '阅读科幻小说', '弹吉他']
+Structured: 姓名=林晓月, 年龄=26, 爱好=['阅读', '摄影', '徒步旅行', '绘画']
 ```
 
 ## 
 🖼️ 图片理解测试 (qwen3-vl-plus)...
 
 ```
-图片描述: 这张图片是关于如何安装和配置 Chatbox AI 工具的教程截图，重点指导用户下载软件并选择“使用自己的 API Key 或本地模型”来搭建个人AI助手。
+图片描述: 这张图片是关于“Chatbox AI”工具的安装与配置教程。内容包括：访问官网免费下载应用，以及在软件内选择“使用自己的 API Key 或本地模型”来搭建个人AI模型载体。
 ```
 
 
@@ -117,14 +137,14 @@ Structured: 姓名=林星辰, 年龄=28, 爱好=['摄影', '徒步旅行', '阅�
 📝 基本问答测试 (deepseek-v3.2-exp)...
 
 ```
-Response: Hello!
+Response: Hi
 ```
 
 ## 
 📋 结构化输出测试 (deepseek-v3.2-exp)...
 
 ```
-Structured: 姓名=林晓, 年龄=28, 爱好=['摄影', '阅读科幻小说', '徒步旅行', '烹饪甜点']
+Structured: 姓名=张明, 年龄=28, 爱好=['阅读', '游泳', '摄影']
 ```
 
 
@@ -174,25 +194,54 @@ Response: Hello
 📋 结构化输出测试 (gemini-2.5-pro)...
 
 ```
-Structured: 姓名=张伟, 年龄=30, 爱好=['编程', '阅读', '徒步旅行']
+Structured: 姓名=张伟, 年龄=32, 爱好=['登山', '摄影', '编程']
 ```
 
 ## 
 🖼️ 图片理解测试 (gemini-2.5-pro)...
 
 ```
-图片描述: 这张图片展示了如何安装和设置一个名为“Chatbox AI”的桌面应用。
-
-图片内容包括：
-1.  **标题**：“第四步：模型载体搭建，安装Chatbox AI工具”。
-2.  **步骤指引**：提示用户访问官网下载软件，并在安装后选择使用自己的API Key或本地模型。
-3.  **软件界面截图**：展示了Chatbox AI的下载页面和软件内部的设置选项，重点突出了“使用自己的API Key或本地模型”这个按钮。
+图片描述: 这张图片展示了如何安装和设置一个名为“Chatbox AI”的软件。图片内容包括该软件的官网下载页面、应用主界面以及一个弹出的设置窗口，该窗口提示用户选择使用“Chatbox AI Cloud”或“使用自己的API Key或本地模型”。
 ```
 
 
 ==================================================
 
-## ✅ 测试完成
+## 6. Computer Use 测试 (点击位置测试)
+
+
+---
+
+## 
+找到测试截图: ./test_image/screenshot.png
+
+```
+图片尺寸: 1024x768
+```
+
+## 
+Computer Use 点击测试 (computer-use-preview)...
+
+```
+任务: 点击 model.json 文件
+```
+
+```
+模型返回点击动作:
+```
+
+```
+位置: (143, 748)
+```
+
+```
+按钮: left
+```
+
+
+==================================================
+
+## 测试完成
 
 
 ---
