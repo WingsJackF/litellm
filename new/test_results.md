@@ -220,10 +220,11 @@ Computer Use 点击测试 (computer-use-preview)...
 ```
 位置: (143, 748)
 ```
-
 ```
 按钮: left
 ```
+
+点击位置见 test_image/marked.png
 
 
 ==================================================
